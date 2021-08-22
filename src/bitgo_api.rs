@@ -184,4 +184,62 @@ impl BitGoAPI {
         );
         self.call_api(&request_url, &json!({})).await
     }
+
+    pub async fn transfer_list(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/wallet/{wallet_id}/transfer",
+            url = self.endpoint,
+            coin_type = identifier,
+            wallet_id = wallet_id,
+        );
+        self.call_api(&request_url, &json!({})).await
+    }
+
+    pub async fn get_fee(
+        &self,
+        identifier: &str,
+        num_blocks: &str,
+        recipient: &str,
+        data: &str,
+        amount: &str,
+        hop: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/tx/fee",
+            url = self.endpoint,
+            coin_type = identifier,
+        );
+        self.call_api(
+            &request_url,
+            &json!({
+                "numBlocks":num_blocks,
+                "recipient":recipient,
+                "data":data,
+                "amount":amount,
+                "hop":hop,
+            }),
+        )
+        .await
+    }
+
+    pub async fn change_fee(
+        &self,
+        identifier: &str,
+        wallet_id: &str,
+        tx_id: &str,
+        fee: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/wallet/{wallet_id}/tx/changeFee",
+            url = self.endpoint,
+            coin_type = identifier,
+            wallet_id = wallet_id,
+        );
+        self.call_api(&request_url, &json!({"txid":tx_id,"fee":fee}))
+            .await
+    }
 }
