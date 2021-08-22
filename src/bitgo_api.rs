@@ -81,4 +81,107 @@ impl BitGoAPI {
 
         self.call_api(&request_url, &json!({})).await
     }
+
+    pub async fn add_webhook_wallet(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+        webhook_lable: &str,
+        webhook_type: &str,
+        webhook_url: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",
+            url = self.endpoint,
+            coin_type = identifier,
+            wallet_id = wallet_id,
+        );
+
+        self.call_api(
+            &request_url,
+            &json!({
+                "type": webhook_type,
+                "url": webhook_url,
+                "label":webhook_lable,
+            }),
+        )
+        .await
+    }
+    pub async fn add_webhook_block(
+        &self,
+        identifier: &str,
+        webhook_type: &str,
+        webhook_lable: &str,
+        webhook_url: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/webhooks",
+            url = self.endpoint,
+            coin_type = identifier,
+        );
+
+        self.call_api(
+            &request_url,
+            &json!({
+                "type": webhook_type,
+                "url": webhook_url,
+                "label":webhook_lable,
+            }),
+        )
+        .await
+    }
+
+    pub async fn list_webhook(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",
+            url = self.endpoint,
+            coin_type = identifier,
+            wallet_id = wallet_id,
+        );
+        self.call_api(&request_url, &json!({})).await
+    }
+
+    pub async fn remove_webhook(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+        webhook_type: &str,
+        webhook_id: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/webhooks",
+            url = self.endpoint,
+            coin_type = identifier,
+        );
+
+        self.call_api(
+            &request_url,
+            &json!({
+                "type": webhook_type,
+                "walletid":wallet_id,
+                "webhook_id":webhook_id
+            }),
+        )
+        .await
+    }
+
+    pub async fn get_transaction(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+        tranfer_id: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/wallet/{wallet_id}/transfer/{transfer_id}",
+            url = self.endpoint,
+            coin_type = identifier,
+            wallet_id = wallet_id,
+            transfer_id = tranfer_id,
+        );
+        self.call_api(&request_url, &json!({})).await
+    }
 }
