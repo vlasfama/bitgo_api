@@ -37,7 +37,7 @@ impl BitGoAPI {
         )
     }
 
-    async fn call_api<T: serde::Serialize>(
+    async fn get_api<T: serde::Serialize>(
         &self,
         request_url: &str,
         params: &T,
@@ -45,6 +45,44 @@ impl BitGoAPI {
         log::trace!("request url {:?}", request_url);
         let response_json: serde_json::Value = reqwest::Client::new()
             .get(request_url)
+            .header(CONTENT_TYPE, "application/json")
+            .header(AUTHORIZATION, format!("Bearer {}", self.token))
+            .json(params)
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        Ok(response_json)
+    }
+
+    async fn post_api<T: serde::Serialize>(
+        &self,
+        request_url: &str,
+        params: &T,
+    ) -> Result<serde_json::Value> {
+        log::trace!("request url {:?}", request_url);
+        let response_json: serde_json::Value = reqwest::Client::new()
+            .post(request_url)
+            .header(CONTENT_TYPE, "application/json")
+            .header(AUTHORIZATION, format!("Bearer {}", self.token))
+            .json(params)
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        Ok(response_json)
+    }
+
+    async fn delet_api<T: serde::Serialize>(
+        &self,
+        request_url: &str,
+        params: &T,
+    ) -> Result<serde_json::Value> {
+        log::trace!("request url {:?}", request_url);
+        let response_json: serde_json::Value = reqwest::Client::new()
+            .delete(request_url)
             .header(CONTENT_TYPE, "application/json")
             .header(AUTHORIZATION, format!("Bearer {}", self.token))
             .json(params)
@@ -68,7 +106,7 @@ impl BitGoAPI {
             coin_type = identifier,
         );
 
-        self.call_api(
+        self.post_api(
             &request_url,
             &json!({
                 "label": name,
@@ -90,7 +128,7 @@ impl BitGoAPI {
             wallet_id = wallet_id,
         );
 
-        self.call_api(&request_url, &json!({})).await
+        self.post_api(&request_url, &json!({})).await
     }
 
     pub async fn add_webhook_wallet(
@@ -108,7 +146,7 @@ impl BitGoAPI {
             wallet_id = wallet_id,
         );
 
-        self.call_api(
+        self.post_api(
             &request_url,
             &json!({
                 "type": webhook_type,
@@ -131,7 +169,7 @@ impl BitGoAPI {
             coin_type = identifier,
         );
 
-        self.call_api(
+        self.post_api(
             &request_url,
             &json!({
                 "type": webhook_type,
@@ -153,7 +191,7 @@ impl BitGoAPI {
             coin_type = identifier,
             wallet_id = wallet_id,
         );
-        self.call_api(&request_url, &json!({})).await
+        self.get_api(&request_url, &json!({})).await
     }
 
     pub async fn remove_webhook(
@@ -169,7 +207,7 @@ impl BitGoAPI {
             coin_type = identifier,
         );
 
-        self.call_api(
+        self.delet_api(
             &request_url,
             &json!({
                 "type": webhook_type,
@@ -193,7 +231,7 @@ impl BitGoAPI {
             wallet_id = wallet_id,
             transfer_id = tranfer_id,
         );
-        self.call_api(&request_url, &json!({})).await
+        self.get_api(&request_url, &json!({})).await
     }
 
     pub async fn transfer_list(
@@ -207,7 +245,7 @@ impl BitGoAPI {
             coin_type = identifier,
             wallet_id = wallet_id,
         );
-        self.call_api(&request_url, &json!({})).await
+        self.get_api(&request_url, &json!({})).await
     }
 
     pub async fn get_fee(
@@ -224,7 +262,7 @@ impl BitGoAPI {
             url = self.endpoint,
             coin_type = identifier,
         );
-        self.call_api(
+        self.get_api(
             &request_url,
             &json!({
                 "numBlocks":num_blocks,
@@ -250,7 +288,7 @@ impl BitGoAPI {
             coin_type = identifier,
             wallet_id = wallet_id,
         );
-        self.call_api(&request_url, &json!({"txid":tx_id,"fee":fee}))
+        self.post_api(&request_url, &json!({"txid":tx_id,"fee":fee}))
             .await
     }
 }
