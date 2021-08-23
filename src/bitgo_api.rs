@@ -3,6 +3,7 @@ use crate::error::{Error, Result};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use serde_json::json;
 
+#[derive(Debug, Clone)]
 pub struct BitGoAPI {
     pub endpoint: String,
     pub token: String,
