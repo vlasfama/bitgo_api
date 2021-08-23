@@ -6,6 +6,7 @@ use serde_json::json;
 pub struct BitGoAPI {
     pub endpoint: String,
     pub token: String,
+    pub webhook_url: String,
 }
 
 pub fn value_or_error(value: serde_json::Value, name: &str) -> Result<serde_json::Value> {
@@ -19,12 +20,16 @@ pub fn value_or_error(value: serde_json::Value, name: &str) -> Result<serde_json
 }
 
 impl BitGoAPI {
-    pub fn new(endpoint: String, token: String) -> Result<Self> {
-        Ok(BitGoAPI { endpoint, token })
+    pub fn new(endpoint: String, token: String, webhook_url: String) -> Result<Self> {
+        Ok(BitGoAPI {
+            endpoint,
+            token,
+            webhook_url,
+        })
     }
 
     pub fn from_config(config: &Config) -> Result<Self> {
-        BitGoAPI::new(config.endpoint.clone(), config.token.clone())
+        BitGoAPI::new(config.endpoint.clone(), config.token.clone(),config.webhook_url.clone())
     }
 
     async fn call_api<T: serde::Serialize>(
