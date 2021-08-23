@@ -3,7 +3,6 @@ use crate::error::{Error, Result};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use serde_json::json;
 
-
 #[derive(Debug, Clone)]
 pub struct BitGoAPI {
     pub endpoint: String,
@@ -45,7 +44,7 @@ impl BitGoAPI {
     ) -> Result<serde_json::Value> {
         log::trace!("request url {:?}", request_url);
         let response_json: serde_json::Value = reqwest::Client::new()
-            .post(request_url)
+            .get(request_url)
             .header(CONTENT_TYPE, "application/json")
             .header(AUTHORIZATION, format!("Bearer {}", self.token))
             .json(params)
