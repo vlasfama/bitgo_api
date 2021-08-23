@@ -3,6 +3,7 @@ use crate::error::{Error, Result};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use serde_json::json;
 
+
 #[derive(Debug, Clone)]
 pub struct BitGoAPI {
     pub endpoint: String,
@@ -30,7 +31,11 @@ impl BitGoAPI {
     }
 
     pub fn from_config(config: &Config) -> Result<Self> {
-        BitGoAPI::new(config.endpoint.clone(), config.token.clone(),config.webhook_url.clone())
+        BitGoAPI::new(
+            config.endpoint.clone(),
+            config.token.clone(),
+            config.webhook_url.clone(),
+        )
     }
 
     async fn call_api<T: serde::Serialize>(
@@ -38,6 +43,7 @@ impl BitGoAPI {
         request_url: &str,
         params: &T,
     ) -> Result<serde_json::Value> {
+        log::trace!("request url {:?}", request_url);
         let response_json: serde_json::Value = reqwest::Client::new()
             .post(request_url)
             .header(CONTENT_TYPE, "application/json")
