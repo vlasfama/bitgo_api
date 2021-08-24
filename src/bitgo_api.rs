@@ -75,7 +75,7 @@ impl BitGoAPI {
         Ok(response_json)
     }
 
-    async fn delet_api<T: serde::Serialize>(
+    async fn delete_api<T: serde::Serialize>(
         &self,
         request_url: &str,
         params: &T,
@@ -207,7 +207,7 @@ impl BitGoAPI {
             coin_type = identifier,
         );
 
-        self.delet_api(
+        self.delete_api(
             &request_url,
             &json!({
                 "type": webhook_type,
