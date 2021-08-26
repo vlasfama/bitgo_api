@@ -15,12 +15,4 @@ pub struct Config {
         about = "API key for the Bitgo service"
     )]
     pub token: String,
-
-    #[structopt(
-        long = "bitgo-webhook-url",
-        short = "u",
-        env = "WEBHOOK_URL",
-        about = "Webhook url  for the Bitgo service"
-    )]
-    pub webhook_url: String,
 }
