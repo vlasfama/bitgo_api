@@ -1,13 +1,13 @@
 use crate::config::Config;
 use crate::error::{Error, Result};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
+use reqwest::RequestBuilder;
 use serde_json::json;
 
 #[derive(Debug, Clone)]
 pub struct BitGoAPI {
     pub endpoint: String,
     pub token: String,
-    pub webhook_url: String,
 }
 
 pub fn value_or_error(value: serde_json::Value, name: &str) -> Result<serde_json::Value> {
@@ -21,20 +21,29 @@ pub fn value_or_error(value: serde_json::Value, name: &str) -> Result<serde_json
 }
 
 impl BitGoAPI {
-    pub fn new(endpoint: String, token: String, webhook_url: String) -> Result<Self> {
-        Ok(BitGoAPI {
-            endpoint,
-            token,
-            webhook_url,
-        })
+    pub fn new(endpoint: String, token: String) -> Result<Self> {
+        Ok(BitGoAPI { endpoint, token })
     }
 
     pub fn from_config(config: &Config) -> Result<Self> {
-        BitGoAPI::new(
-            config.endpoint.clone(),
-            config.token.clone(),
-            config.webhook_url.clone(),
-        )
+        BitGoAPI::new(config.endpoint.clone(), config.token.clone())
+    }
+
+    async fn call_api<T: serde::Serialize>(
+        &self,
+        builder: RequestBuilder,
+        params: &T,
+    ) -> Result<serde_json::Value> {
+        let response_json: serde_json::Value = builder
+            .header(CONTENT_TYPE, "application/json")
+            .header(AUTHORIZATION, format!("Bearer {}", self.token))
+            .json(params)
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        Ok(response_json)
     }
 
     async fn get_api<T: serde::Serialize>(
@@ -43,17 +52,8 @@ impl BitGoAPI {
         params: &T,
     ) -> Result<serde_json::Value> {
         log::trace!("request url {:?}", request_url);
-        let response_json: serde_json::Value = reqwest::Client::new()
-            .get(request_url)
-            .header(CONTENT_TYPE, "application/json")
-            .header(AUTHORIZATION, format!("Bearer {}", self.token))
-            .json(params)
-            .send()
-            .await?
-            .json()
-            .await?;
-
-        Ok(response_json)
+        let builder = reqwest::Client::new().get(request_url);
+        self.call_api(builder, params).await
     }
 
     async fn post_api<T: serde::Serialize>(
@@ -62,17 +62,8 @@ impl BitGoAPI {
         params: &T,
     ) -> Result<serde_json::Value> {
         log::trace!("request url {:?}", request_url);
-        let response_json: serde_json::Value = reqwest::Client::new()
-            .post(request_url)
-            .header(CONTENT_TYPE, "application/json")
-            .header(AUTHORIZATION, format!("Bearer {}", self.token))
-            .json(params)
-            .send()
-            .await?
-            .json()
-            .await?;
-
-        Ok(response_json)
+        let builder = reqwest::Client::new().post(request_url);
+        self.call_api(builder, params).await
     }
 
     async fn delete_api<T: serde::Serialize>(
@@ -81,17 +72,8 @@ impl BitGoAPI {
         params: &T,
     ) -> Result<serde_json::Value> {
         log::trace!("request url {:?}", request_url);
-        let response_json: serde_json::Value = reqwest::Client::new()
-            .delete(request_url)
-            .header(CONTENT_TYPE, "application/json")
-            .header(AUTHORIZATION, format!("Bearer {}", self.token))
-            .json(params)
-            .send()
-            .await?
-            .json()
-            .await?;
-
-        Ok(response_json)
+        let builder = reqwest::Client::new().delete(request_url);
+        self.call_api(builder, params).await
     }
 
     pub async fn generate_wallet(
@@ -131,11 +113,11 @@ impl BitGoAPI {
         self.post_api(&request_url, &json!({})).await
     }
 
-    pub async fn add_webhook_wallet(
+    pub async fn add_wallet_webhook(
         &self,
         wallet_id: &str,
         identifier: &str,
-        webhook_lable: &str,
+        webhook_label: &str,
         webhook_type: &str,
         webhook_url: &str,
     ) -> Result<serde_json::Value> {
@@ -151,16 +133,16 @@ impl BitGoAPI {
             &json!({
                 "type": webhook_type,
                 "url": webhook_url,
-                "label":webhook_lable,
+                "label":webhook_label,
             }),
         )
         .await
     }
-    pub async fn add_webhook_block(
+    pub async fn add_block_webhook(
         &self,
         identifier: &str,
         webhook_type: &str,
-        webhook_lable: &str,
+        webhook_label: &str,
         webhook_url: &str,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
@@ -174,7 +156,7 @@ impl BitGoAPI {
             &json!({
                 "type": webhook_type,
                 "url": webhook_url,
-                "label":webhook_lable,
+                "label":webhook_label,
             }),
         )
         .await
@@ -202,16 +184,16 @@ impl BitGoAPI {
         webhook_id: &str,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
-            "{url}/api/v2/{coin_type}/webhooks",
+            "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",
             url = self.endpoint,
             coin_type = identifier,
+            wallet_id = wallet_id,
         );
 
         self.delete_api(
             &request_url,
             &json!({
                 "type": webhook_type,
-                "walletid":wallet_id,
                 "webhook_id":webhook_id
             }),
         )
@@ -222,14 +204,14 @@ impl BitGoAPI {
         &self,
         wallet_id: &str,
         identifier: &str,
-        tranfer_id: &str,
+        transfer_id: &str,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/{wallet_id}/transfer/{transfer_id}",
             url = self.endpoint,
             coin_type = identifier,
             wallet_id = wallet_id,
-            transfer_id = tranfer_id,
+            transfer_id = transfer_id,
         );
         self.get_api(&request_url, &json!({})).await
     }
