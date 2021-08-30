@@ -1,8 +1,12 @@
 use crate::config::Config;
 use crate::error::{Error, Result};
+use crate::wallet::BitgoWallet;
+use crate::webhook::BitgoWebhook;
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use reqwest::RequestBuilder;
 use serde_json::json;
+
+pub trait Bitgo: BitgoWebhook + BitgoWallet {}
 
 #[derive(Debug, Clone)]
 pub struct BitGoAPI {

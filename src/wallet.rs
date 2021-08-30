@@ -1,16 +1,28 @@
 use crate::bitgo_api::BitGoAPI;
 use crate::error::{Error, Result};
+use async_trait::async_trait;
 use serde_json::json;
+
+#[async_trait]
+pub trait BitgoWallet {
+    async fn generate_wallet(
+        &self,
+        name: &str,
+        identifier: &str,
+        passphrase: &str,
+    ) -> Result<serde_json::Value>;
+    async fn generate_address(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+    ) -> Result<serde_json::Value>;
+}
 pub struct Wallet {
     pub bitgo: BitGoAPI,
 }
-
-impl Wallet {
-    pub fn new(bit_go: BitGoAPI) -> Result<Self> {
-        Ok(Wallet { bitgo: bit_go })
-    }
-
-    pub async fn generate_wallet(
+#[async_trait]
+impl BitgoWallet for BitGoAPI {
+    async fn generate_wallet(
         &self,
         name: &str,
         identifier: &str,
@@ -18,33 +30,31 @@ impl Wallet {
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/generate",
-            url = self.bitgo.endpoint,
+            url = self.endpoint,
             coin_type = identifier,
         );
 
-        self.bitgo
-            .post_api(
-                &request_url,
-                &json!({
-                    "label": name,
-                    "passphrase": passphrase,
-                }),
-            )
-            .await
+        self.post_api(
+            &request_url,
+            &json!({
+                "label": name,
+                "passphrase": passphrase,
+            }),
+        )
+        .await
     }
 
-    pub async fn generate_address(
+    async fn generate_address(
         &self,
         wallet_id: &str,
         identifier: &str,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/{wallet_id}/address",
-            url = self.bitgo.endpoint,
+            url = self.endpoint,
             coin_type = identifier,
             wallet_id = wallet_id,
         );
-
-        self.bitgo.post_api(&request_url, &json!({})).await
+        self.post_api(&request_url, &json!({})).await
     }
 }
