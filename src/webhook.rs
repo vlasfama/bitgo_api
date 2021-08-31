@@ -1,11 +1,10 @@
-use crate::bitgo_api::BitGoAPI;
+use crate::client::BitGoClient;
 use crate::error::Result;
 use async_trait::async_trait;
 use serde_json::json;
 
 #[async_trait]
-pub trait BitGoWebhook {
-    
+pub trait BitGoWebhookAPI {
     async fn add_wallet_webhook(
         &self,
         wallet_id: &str,
@@ -22,7 +21,9 @@ pub trait BitGoWebhook {
         webhook_label: &str,
         webhook_url: &str,
     ) -> Result<serde_json::Value>;
+
     async fn list_webhook(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value>;
+
     async fn remove_webhook(
         &self,
         wallet_id: &str,
@@ -32,7 +33,7 @@ pub trait BitGoWebhook {
     ) -> Result<serde_json::Value>;
 }
 #[async_trait]
-impl BitGoWebhook for BitGoAPI {
+impl BitGoWebhookAPI for BitGoClient {
     async fn add_wallet_webhook(
         &self,
         wallet_id: &str,

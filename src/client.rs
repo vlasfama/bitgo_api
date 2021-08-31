@@ -1,15 +1,12 @@
 use crate::config::Config;
 use crate::error::{Error, Result};
-use crate::transfer::BitGoTransfer;
-use crate::wallet::BitGoWallet;
-use crate::webhook::BitGoWebhook;
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use reqwest::RequestBuilder;
 
-pub trait BitGo: BitGoWebhook + BitGoWallet + BitGoTransfer {}
+
 
 #[derive(Debug, Clone)]
-pub struct BitGoAPI {
+pub struct BitGoClient {
     pub endpoint: String,
     pub token: String,
 }
@@ -23,13 +20,13 @@ pub fn value_or_error(value: serde_json::Value, name: &str) -> Result<serde_json
     }
 }
 
-impl BitGoAPI {
+impl BitGoClient {
     pub fn new(endpoint: String, token: String) -> Result<Self> {
-        Ok(BitGoAPI { endpoint, token })
+        Ok(BitGoClient { endpoint, token })
     }
 
     pub fn from_config(config: &Config) -> Result<Self> {
-        BitGoAPI::new(config.endpoint.clone(), config.token.clone())
+        BitGoClient::new(config.endpoint.clone(), config.token.clone())
     }
 
     async fn call_api<T: serde::Serialize>(

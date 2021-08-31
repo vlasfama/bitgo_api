@@ -2,14 +2,14 @@ use crate::error::Result;
 use async_trait::async_trait;
 use mockall::mock;
 
-use crate::{transfer::BitGoTransfer, wallet::BitGoWallet, webhook::BitGoWebhook};
+use crate::{transfer::BitGoTransferAPI, wallet::BitGoWalletAPI, webhook::BitGoWebhookAPI};
 
 mock! {
     pub BitGo {}
 
 
     #[async_trait]
-    impl BitGoTransfer for BitGo {
+    impl BitGoTransferAPI for BitGo {
         async fn get_transaction(
             &self,
             wallet_id: &str,
@@ -37,8 +37,8 @@ mock! {
     }
 
     #[async_trait]
-    impl BitGoWallet for BitGo {
-        async fn generate(
+    impl BitGoWalletAPI for BitGo {
+        async fn generate_wallet(
             &self,
             name: &str,
             identifier: &str,
@@ -52,7 +52,7 @@ mock! {
     }
 
     #[async_trait]
-    impl BitGoWebhook for BitGo {
+    impl BitGoWebhookAPI for BitGo {
         async fn add_wallet_webhook(
             &self,
             wallet_id: &str,
@@ -82,9 +82,9 @@ mock! {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, Value};
+    use serde_json::json;
 
-    use crate::bitgo_api::value_or_error;
+    use crate::client::value_or_error;
 
     use super::*;
 
