@@ -5,6 +5,7 @@ use serde_json::json;
 
 #[async_trait]
 pub trait BitGoWebhook {
+    
     async fn add_wallet_webhook(
         &self,
         wallet_id: &str,

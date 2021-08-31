@@ -38,13 +38,13 @@ mock! {
 
     #[async_trait]
     impl BitGoWallet for BitGo {
-        async fn generate_wallet(
+        async fn generate(
             &self,
             name: &str,
             identifier: &str,
             passphrase: &str,
         ) -> Result<serde_json::Value>;
-        async fn create_address(
+        async fn address(
             &self,
             wallet_id: &str,
             identifier: &str,
@@ -91,11 +91,11 @@ mod tests {
     #[tokio::test]
     async fn test_mocking() {
         let mut mock = MockBitGo::new();
-        mock.expect_create_address().return_const(Ok(
+        mock.expect_address().return_const(Ok(
             json!({ "address": "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS" }),
         ));
 
-        let v = mock.create_address("any", " any").await.unwrap();
+        let v = mock.address("any", " any").await.unwrap();
         assert_eq!(
             value_or_error(v, "address").unwrap().to_owned(),
             "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS"
