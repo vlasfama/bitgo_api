@@ -2,14 +2,14 @@ use crate::error::Result;
 use async_trait::async_trait;
 use mockall::mock;
 
-use crate::{transfer::BitGoTransfer, wallet::BitGoWallet, webhook::BitGoWebhook};
+use crate::{transfer::BitGoTransferAPI, wallet::BitGoWalletAPI, webhook::BitGoWebhookAPI};
 
 mock! {
-    pub BitGo {}
+    pub BitGoClient {}
 
 
     #[async_trait]
-    impl BitGoTransfer for BitGo {
+    impl BitGoTransferAPI for BitGoClient {
         async fn get_transaction(
             &self,
             wallet_id: &str,
@@ -37,14 +37,14 @@ mock! {
     }
 
     #[async_trait]
-    impl BitGoWallet for BitGo {
-        async fn generate(
+    impl BitGoWalletAPI for BitGoClient {
+        async fn generate_wallet(
             &self,
             name: &str,
             identifier: &str,
             passphrase: &str,
         ) -> Result<serde_json::Value>;
-        async fn address(
+        async fn create_address(
             &self,
             wallet_id: &str,
             identifier: &str,
@@ -52,7 +52,7 @@ mock! {
     }
 
     #[async_trait]
-    impl BitGoWebhook for BitGo {
+    impl BitGoWebhookAPI for BitGoClient {
         async fn add_wallet_webhook(
             &self,
             wallet_id: &str,
@@ -82,20 +82,18 @@ mock! {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, Value};
-
-    use crate::bitgo_api::value_or_error;
-
+    use serde_json::json;
+    use crate::client::value_or_error;
     use super::*;
 
     #[tokio::test]
     async fn test_mocking() {
-        let mut mock = MockBitGo::new();
-        mock.expect_address().return_const(Ok(
+        let mut mock = MockBitGoClient::new();
+        mock.expect_create_address().return_const(Ok(
             json!({ "address": "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS" }),
         ));
 
-        let v = mock.address("any", " any").await.unwrap();
+        let v = mock.create_address("any", " any").await.unwrap();
         assert_eq!(
             value_or_error(v, "address").unwrap().to_owned(),
             "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS"
