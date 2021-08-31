@@ -2,6 +2,10 @@
 name = "bitgo_api"
 version = "0.1.9"
 edition = "2018"
+description = "Rust implimentation for Bitgo api"
+readme = "README.md"
+license = "Apache-2.0"
+authors = ["mostafa","nagaraj-manjunath"]
 
 [dependencies]
 structopt = { version = "0.3", default-features = false }
