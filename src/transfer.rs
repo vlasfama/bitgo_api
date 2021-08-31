@@ -1,10 +1,14 @@
 use crate::bitgo_api::BitGoAPI;
-use crate::error::{Error, Result};
+use crate::error::Result;
 use async_trait::async_trait;
 use serde_json::json;
 
+#[cfg(test)]
+use mockall::{automock, predicate::*};
+
+#[cfg_attr(test, automock)]
 #[async_trait]
-pub trait BitgoTransfer {
+pub trait BitGoTransfer {
     async fn get_transaction(
         &self,
         wallet_id: &str,
@@ -32,7 +36,7 @@ pub trait BitgoTransfer {
 }
 
 #[async_trait]
-impl BitgoTransfer for BitGoAPI {
+impl BitGoTransfer for BitGoAPI {
     async fn get_transaction(
         &self,
         wallet_id: &str,

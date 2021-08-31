@@ -1,17 +1,21 @@
 use crate::bitgo_api::BitGoAPI;
-use crate::error::{Error, Result};
+use crate::error::Result;
 use async_trait::async_trait;
 use serde_json::json;
 
+#[cfg(test)]
+use mockall::{automock, predicate::*};
+
+#[cfg_attr(test, automock)]
 #[async_trait]
-pub trait BitgoWallet {
+pub trait BitGoWallet {
     async fn generate_wallet(
         &self,
         name: &str,
         identifier: &str,
         passphrase: &str,
     ) -> Result<serde_json::Value>;
-    async fn generate_address(
+    async fn create_address(
         &self,
         wallet_id: &str,
         identifier: &str,
@@ -21,7 +25,7 @@ pub struct Wallet {
     pub bitgo: BitGoAPI,
 }
 #[async_trait]
-impl BitgoWallet for BitGoAPI {
+impl BitGoWallet for BitGoAPI {
     async fn generate_wallet(
         &self,
         name: &str,
@@ -44,7 +48,7 @@ impl BitgoWallet for BitGoAPI {
         .await
     }
 
-    async fn generate_address(
+    async fn create_address(
         &self,
         wallet_id: &str,
         identifier: &str,
