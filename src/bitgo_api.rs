@@ -1,12 +1,12 @@
 use crate::config::Config;
 use crate::error::{Error, Result};
-use crate::wallet::BitgoWallet;
-use crate::webhook::BitgoWebhook;
+use crate::transfer::BitGoTransfer;
+use crate::wallet::BitGoWallet;
+use crate::webhook::BitGoWebhook;
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use reqwest::RequestBuilder;
-use serde_json::json;
 
-pub trait Bitgo: BitgoWebhook + BitgoWallet {}
+pub trait BitGo: BitGoWebhook + BitGoWallet + BitGoTransfer {}
 
 #[derive(Debug, Clone)]
 pub struct BitGoAPI {
@@ -18,8 +18,7 @@ pub fn value_or_error(value: serde_json::Value, name: &str) -> Result<serde_json
     match value.get(name) {
         Some(value) => Ok(value.to_owned()),
         None => {
-            let e = value.get("error").unwrap();
-            Err(Error::BitGoError { msg: e.to_string() })
+            Err(Error::InvalidKey { key: name.to_owned() })
         }
     }
 }

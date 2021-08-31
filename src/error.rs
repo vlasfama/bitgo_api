@@ -1,12 +1,9 @@
 use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Clone)]
 pub enum Error {
-    #[error("Connection error: {msg}")]
-    Connection { msg: String },
-
-    #[error("BitGo Error: {msg}")]
-    BitGoError { msg: String },
+    #[error("Invalid key: {key}")]
+    InvalidKey { key: String },
 
     #[error("reqwest Error: {msg}")]
     ReqwestError { msg: String },

@@ -6,13 +6,13 @@ pub struct Config {
     #[structopt(
         long = "bitgo-endpoint",
         env = "BITGO_ENDPOINT",
-        about = "Bitgo REST API endpoint"
+        about = "BitGo REST API endpoint"
     )]
     pub endpoint: String,
     #[structopt(
         long = "bitgo-token",
         env = "BITGO_TOKEN",
-        about = "API key for the Bitgo service"
+        about = "API key for the BitGo service"
     )]
     pub token: String,
 }
