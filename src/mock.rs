@@ -95,7 +95,7 @@ mod tests {
 
         let v = mock.create_address("any", " any").await.unwrap();
         assert_eq!(
-            value_or_error(v, "address").unwrap().to_owned(),
+            value_or_error(&v, "address").unwrap().to_owned(),
             "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS"
         );
     }
