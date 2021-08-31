@@ -46,10 +46,10 @@ assert_eq!(
 
 This project is licensed under the [MIT license].
 
-[MIT license]: https://github.com/LICENSE
+[Apache license]: https://github.com/nagarajmanjunath/bitgo_api/blob/main/LICENSE
 
 ### Contribution
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in BitGo by you, shall be licensed as MIT, without any additional
+for inclusion in BitGo by you, shall be licensed as Apache, without any additional
 terms or conditions.
