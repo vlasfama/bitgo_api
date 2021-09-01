@@ -1,6 +1,6 @@
 [package]
 name = "bitgo_api"
-version = "0.1.10"
+version = "0.1.11"
 edition = "2018"
 description = "Rust implimentation for Bitgo api"
 readme = "README.md"
@@ -15,7 +15,7 @@ reqwest = { version = "0.11.4", features = ["blocking", "json"] }
 thiserror = "1.0.26"
 log = "0.4.14"
 async-trait = "0.1.50"
+mockall = "0.10.2"
 
 [dev-dependencies]
 tokio = { version = "1.9", features = ["macros"] }
-mockall = "0.10.2"

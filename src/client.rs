@@ -11,7 +11,7 @@ pub struct BitGoClient {
     pub token: String,
 }
 
-pub fn value_or_error(value: serde_json::Value, name: &str) -> Result<serde_json::Value> {
+pub fn value_or_error(value: &serde_json::Value, name: &str) -> Result<serde_json::Value> {
     match value.get(name) {
         Some(value) => Ok(value.to_owned()),
         None => {
