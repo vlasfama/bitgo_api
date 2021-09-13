@@ -49,6 +49,9 @@ mock! {
             wallet_id: &str,
             identifier: &str,
         ) -> Result<serde_json::Value>;
+        async fn get_wallet_list(
+            &self
+        ) -> Result<serde_json::Value>;
     }
 
     #[async_trait]
@@ -82,9 +85,9 @@ mock! {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-    use crate::client::value_or_error;
     use super::*;
+    use crate::client::value_or_error;
+    use serde_json::json;
 
     #[tokio::test]
     async fn test_mocking() {

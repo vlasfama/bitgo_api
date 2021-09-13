@@ -3,7 +3,6 @@ use crate::error::Result;
 use async_trait::async_trait;
 use serde_json::json;
 
-
 #[async_trait]
 pub trait BitGoWalletAPI {
     async fn generate_wallet(
@@ -13,6 +12,7 @@ pub trait BitGoWalletAPI {
         passphrase: &str,
     ) -> Result<serde_json::Value>;
     async fn create_address(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value>;
+    async fn get_wallet_list(&self) -> Result<serde_json::Value>;
 }
 
 #[async_trait]
@@ -57,5 +57,10 @@ impl BitGoWalletAPI for BitGoClient {
             wallet_id = wallet_id,
         );
         self.post_api(&request_url, &json!({})).await
+    }
+
+    async fn get_wallet_list(&self) -> Result<serde_json::Value> {
+        let request_url = format!("{url}/api/v2/wallets/", url = self.endpoint,);
+        self.get_api(&request_url, &json!({})).await
     }
 }
