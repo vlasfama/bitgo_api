@@ -22,13 +22,28 @@ pub trait BitGoWebhookAPI {
         webhook_url: &str,
     ) -> Result<serde_json::Value>;
 
-    async fn list_webhook(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value>;
+    async fn list_wallet_webhook(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+    ) -> Result<serde_json::Value>;
 
-    async fn remove_webhook(
+    async fn list_block_webhook(&self, identifier: &str) -> Result<serde_json::Value>;
+
+    async fn remove_wallet_webhook(
         &self,
         wallet_id: &str,
         identifier: &str,
         webhook_type: &str,
+        webhook_url: &str,
+        webhook_id:&str,
+    ) -> Result<serde_json::Value>;
+
+    async fn remove_block_webhook(
+        &self,
+        identifier: &str,
+        webhook_type: &str,
+        webhook_url: &str,
         webhook_id: &str,
     ) -> Result<serde_json::Value>;
 }
@@ -84,7 +99,11 @@ impl BitGoWebhookAPI for BitGoClient {
         .await
     }
 
-    async fn list_webhook(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value> {
+    async fn list_wallet_webhook(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+    ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",
             url = self.endpoint,
@@ -94,12 +113,25 @@ impl BitGoWebhookAPI for BitGoClient {
         self.get_api(&request_url, &json!({})).await
     }
 
-    async fn remove_webhook(
+    async fn list_block_webhook(
+        &self,
+        identifier: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/webhooks",
+            url = self.endpoint,
+            coin_type = identifier,
+        );
+        self.get_api(&request_url, &json!({})).await
+    }
+
+    async fn remove_wallet_webhook(
         &self,
         wallet_id: &str,
         identifier: &str,
         webhook_type: &str,
-        webhook_id: &str,
+        webhook_url: &str,
+        webhook_id:&str,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",
@@ -112,7 +144,32 @@ impl BitGoWebhookAPI for BitGoClient {
             &request_url,
             &json!({
                 "type": webhook_type,
-                "webhook_id":webhook_id
+                "url":webhook_url,
+                "id":webhook_id,
+            }),
+        )
+        .await
+    }
+
+    async fn remove_block_webhook(
+        &self,
+        identifier: &str,
+        webhook_type: &str,
+        webhook_url: &str,
+        webhook_id: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/webhooks",
+            url = self.endpoint,
+            coin_type = identifier,
+        );
+
+        self.delete_api(
+            &request_url,
+            &json!({
+                "type": webhook_type,
+                "url":webhook_url,
+                "id":webhook_id,
             }),
         )
         .await

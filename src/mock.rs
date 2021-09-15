@@ -72,12 +72,22 @@ mock! {
             webhook_label: &str,
             webhook_url: &str,
         ) -> Result<serde_json::Value>;
-        async fn list_webhook(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value>;
-        async fn remove_webhook(
+        async fn list_wallet_webhook(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value>;
+        async fn list_block_webhook(&self,identifier: &str) -> Result<serde_json::Value>;
+        async fn remove_wallet_webhook(
             &self,
             wallet_id: &str,
             identifier: &str,
             webhook_type: &str,
+            webhook_url: &str,
+            webhook_id:&str,
+        ) -> Result<serde_json::Value>;
+
+        async fn remove_block_webhook(
+            &self,
+            identifier: &str,
+            webhook_type: &str,
+            webhook_url: &str,
             webhook_id: &str,
         ) -> Result<serde_json::Value>;
     }
