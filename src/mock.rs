@@ -63,6 +63,7 @@ mock! {
             webhook_label: &str,
             webhook_type: &str,
             webhook_url: &str,
+            num_confirmation:i32,
         ) -> Result<serde_json::Value>;
 
         async fn add_block_webhook(
@@ -71,6 +72,7 @@ mock! {
             webhook_type: &str,
             webhook_label: &str,
             webhook_url: &str,
+            num_confirmation:i32
         ) -> Result<serde_json::Value>;
         async fn list_wallet_webhook(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value>;
         async fn list_block_webhook(&self,identifier: &str) -> Result<serde_json::Value>;

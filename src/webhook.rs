@@ -12,6 +12,7 @@ pub trait BitGoWebhookAPI {
         webhook_label: &str,
         webhook_type: &str,
         webhook_url: &str,
+        num_confirmation:i32,
     ) -> Result<serde_json::Value>;
 
     async fn add_block_webhook(
@@ -20,6 +21,7 @@ pub trait BitGoWebhookAPI {
         webhook_type: &str,
         webhook_label: &str,
         webhook_url: &str,
+        num_confirmation:i32,
     ) -> Result<serde_json::Value>;
 
     async fn list_wallet_webhook(
@@ -56,6 +58,7 @@ impl BitGoWebhookAPI for BitGoClient {
         webhook_label: &str,
         webhook_type: &str,
         webhook_url: &str,
+        num_confirmation:i32,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",
@@ -70,6 +73,7 @@ impl BitGoWebhookAPI for BitGoClient {
                 "type": webhook_type,
                 "url": webhook_url,
                 "label":webhook_label,
+                "numConfirmations":num_confirmation
             }),
         )
         .await
@@ -81,6 +85,7 @@ impl BitGoWebhookAPI for BitGoClient {
         webhook_type: &str,
         webhook_label: &str,
         webhook_url: &str,
+        num_confirmation:i32,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/webhooks",
@@ -94,6 +99,7 @@ impl BitGoWebhookAPI for BitGoClient {
                 "type": webhook_type,
                 "url": webhook_url,
                 "label":webhook_label,
+                "numConfirmations":num_confirmation
             }),
         )
         .await
