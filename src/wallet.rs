@@ -10,8 +10,14 @@ pub trait BitGoWalletAPI {
         name: &str,
         identifier: &str,
         passphrase: &str,
+        enterprise_id: &str,
     ) -> Result<serde_json::Value>;
-    async fn create_address(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value>;
+    async fn create_address(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+        forwarder_version: i32,
+    ) -> Result<serde_json::Value>;
     async fn get_wallet_list(&self) -> Result<serde_json::Value>;
 }
 
@@ -29,6 +35,7 @@ impl BitGoWalletAPI for BitGoClient {
         name: &str,
         identifier: &str,
         passphrase: &str,
+        enterprise_id: &str,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/generate",
@@ -41,6 +48,7 @@ impl BitGoWalletAPI for BitGoClient {
             &json!({
                 "label": name,
                 "passphrase": passphrase,
+                "enterprise":enterprise_id,
             }),
         )
         .await
@@ -49,14 +57,25 @@ impl BitGoWalletAPI for BitGoClient {
     /// This API call is used to create a new receive address for your wallet.
     /// You may choose to call this API whenever a deposit is made.
     /// The BitGo API supports millions of addresses.
-    async fn create_address(&self, wallet_id: &str, identifier: &str) -> Result<serde_json::Value> {
+    async fn create_address(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+        forwarder_version: i32,
+    ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/{wallet_id}/address",
             url = self.endpoint,
             coin_type = identifier,
             wallet_id = wallet_id,
         );
-        self.post_api(&request_url, &json!({})).await
+        self.post_api(
+            &request_url,
+            &json!({
+                "forwarderVersion":forwarder_version,
+            }),
+        )
+        .await
     }
 
     async fn get_wallet_list(&self) -> Result<serde_json::Value> {

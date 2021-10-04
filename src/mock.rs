@@ -43,11 +43,13 @@ mock! {
             name: &str,
             identifier: &str,
             passphrase: &str,
+            enterprise_id:&str,
         ) -> Result<serde_json::Value>;
         async fn create_address(
             &self,
             wallet_id: &str,
             identifier: &str,
+            forwarde_version: i32,
         ) -> Result<serde_json::Value>;
         async fn get_wallet_list(
             &self
@@ -108,7 +110,7 @@ mod tests {
             json!({ "address": "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS" }),
         ));
 
-        let v = mock.create_address("any", " any").await.unwrap();
+        let v = mock.create_address("any", " any", 0).await.unwrap();
         assert_eq!(
             value_or_error(&v, "address").unwrap().to_owned(),
             "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS"
