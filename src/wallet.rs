@@ -10,6 +10,12 @@ pub trait BitGoWalletAPI {
         name: &str,
         identifier: &str,
         passphrase: &str,
+    ) -> Result<serde_json::Value>;
+    async fn generate_enterprise_wallet(
+        &self,
+        name: &str,
+        identifier: &str,
+        passphrase: &str,
         enterprise_id: &str,
     ) -> Result<serde_json::Value>;
     async fn create_address(
@@ -31,6 +37,33 @@ impl BitGoWalletAPI for BitGoClient {
     /// 4.Creates the BitGo key (and the backup key if backupXpubProvider is set) on the service.
     /// 5.Creates the wallet on BitGo with the 3 public keys above.
     async fn generate_wallet(
+        &self,
+        name: &str,
+        identifier: &str,
+        passphrase: &str,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/wallet/generate",
+            url = self.endpoint,
+            coin_type = identifier,
+        );
+        self.post_api(
+            &request_url,
+            &json!({
+                "label": name,
+                "passphrase": passphrase,
+            }),
+        )
+        .await
+    }
+    /// This API call creates a new wallet. Under the hood, the SDK (or BitGo Express) does the following:
+    ///
+    /// 1.Creates the user keychain locally on the machine, and encrypts it with the provided passphrase (skipped if userKey is provided).
+    /// 2.Creates the backup keychain locally on the machine.
+    /// 3.Uploads the encrypted user keychain and public backup keychain.
+    /// 4.Creates the BitGo key (and the backup key if backupXpubProvider is set) on the service.
+    /// 5.Creates the wallet on BitGo with the 3 public keys above.
+    async fn generate_enterprise_wallet(
         &self,
         name: &str,
         identifier: &str,

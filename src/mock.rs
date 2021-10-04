@@ -43,6 +43,12 @@ mock! {
             name: &str,
             identifier: &str,
             passphrase: &str,
+        ) -> Result<serde_json::Value>;
+        async fn generate_enterprise_wallet(
+            &self,
+            name: &str,
+            identifier: &str,
+            passphrase: &str,
             enterprise_id:&str,
         ) -> Result<serde_json::Value>;
         async fn create_address(
