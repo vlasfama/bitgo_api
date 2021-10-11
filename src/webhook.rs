@@ -77,7 +77,9 @@ impl BitGoWebhookAPI for BitGoClient {
                 "type": webhook_type,
                 "url": webhook_url,
                 "label":webhook_label,
-                "numConfirmations":num_confirmation
+                "numConfirmations":num_confirmation,
+                "allToken":all_token,
+                "listenToFailureStates":listen_failure_states
             }),
         )
         .await
