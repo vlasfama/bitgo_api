@@ -12,7 +12,9 @@ pub trait BitGoWebhookAPI {
         webhook_label: &str,
         webhook_type: &str,
         webhook_url: &str,
-        num_confirmation:i32,
+        num_confirmation: i32,
+        all_token: bool,
+        listen_failure_states: bool,
     ) -> Result<serde_json::Value>;
 
     async fn add_block_webhook(
@@ -21,7 +23,7 @@ pub trait BitGoWebhookAPI {
         webhook_type: &str,
         webhook_label: &str,
         webhook_url: &str,
-        num_confirmation:i32,
+        num_confirmation: i32,
     ) -> Result<serde_json::Value>;
 
     async fn list_wallet_webhook(
@@ -38,7 +40,7 @@ pub trait BitGoWebhookAPI {
         identifier: &str,
         webhook_type: &str,
         webhook_url: &str,
-        webhook_id:&str,
+        webhook_id: &str,
     ) -> Result<serde_json::Value>;
 
     async fn remove_block_webhook(
@@ -58,7 +60,9 @@ impl BitGoWebhookAPI for BitGoClient {
         webhook_label: &str,
         webhook_type: &str,
         webhook_url: &str,
-        num_confirmation:i32,
+        num_confirmation: i32,
+        all_token: bool,
+        listen_failure_states: bool,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",
@@ -85,7 +89,7 @@ impl BitGoWebhookAPI for BitGoClient {
         webhook_type: &str,
         webhook_label: &str,
         webhook_url: &str,
-        num_confirmation:i32,
+        num_confirmation: i32,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/webhooks",
@@ -119,10 +123,7 @@ impl BitGoWebhookAPI for BitGoClient {
         self.get_api(&request_url, &json!({})).await
     }
 
-    async fn list_block_webhook(
-        &self,
-        identifier: &str,
-    ) -> Result<serde_json::Value> {
+    async fn list_block_webhook(&self, identifier: &str) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/webhooks",
             url = self.endpoint,
@@ -137,7 +138,7 @@ impl BitGoWebhookAPI for BitGoClient {
         identifier: &str,
         webhook_type: &str,
         webhook_url: &str,
-        webhook_id:&str,
+        webhook_id: &str,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",

@@ -72,6 +72,8 @@ mock! {
             webhook_type: &str,
             webhook_url: &str,
             num_confirmation:i32,
+            all_token: bool,
+            listen_failure_states: bool,
         ) -> Result<serde_json::Value>;
 
         async fn add_block_webhook(
