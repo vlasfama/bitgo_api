@@ -1,7 +1,8 @@
 use crate::config::Config;
 use crate::error::{Error, Result};
+use reqwest::header;
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
-use reqwest::RequestBuilder;
+use reqwest::{Client, ClientBuilder, RequestBuilder};
 use std::fs::File;
 use std::io::BufReader;
 use std::io::Read;
@@ -32,12 +33,30 @@ impl BitGoClient {
 
     async fn call_api<T: serde::Serialize>(
         &self,
-        builder: RequestBuilder,
+        builder: ClientBuilder,
         params: &T,
+        request_url: &str,
     ) -> Result<serde_json::Value> {
-        let response_json: serde_json::Value = builder
-            .header(CONTENT_TYPE, "application/json")
-            .header(AUTHORIZATION, format!("Bearer {}", self.token))
+        let mut headers = header::HeaderMap::new();
+        headers.insert(
+            header::AUTHORIZATION,
+            header::HeaderValue::from_str(self.token.as_str()).unwrap(),
+        );
+        headers.insert(
+            header::CONTENT_TYPE,
+            header::HeaderValue::from_static("application/json"),
+        );
+        // read a local binary DER encoded certificate
+        let pem = std::fs::read("/Users/naga_coinhaven/certs/private/cert.crt").unwrap();
+        let cert = reqwest::Certificate::from_pem(&pem)?;
+
+        let client = builder
+            .add_root_certificate(cert)
+            .default_headers(headers)
+            .build()?;
+
+        let response_json: serde_json::Value = client
+            .get(request_url)
             .json(params)
             .send()
             .await?
@@ -53,8 +72,8 @@ impl BitGoClient {
         params: &T,
     ) -> Result<serde_json::Value> {
         log::trace!("request url {:?}", request_url);
-        let builder = reqwest::Client::new().get(request_url);
-        self.call_api(builder, params).await
+        let builder = reqwest::Client::builder();
+        self.call_api(builder, params, request_url).await
     }
 
     pub async fn post_api<T: serde::Serialize>(
@@ -63,8 +82,8 @@ impl BitGoClient {
         params: &T,
     ) -> Result<serde_json::Value> {
         log::trace!("request url {:?}", request_url);
-        let builder = reqwest::Client::new().post(request_url);
-        self.call_api(builder, params).await
+        let builder = reqwest::Client::builder();
+        self.call_api(builder, params, request_url).await
     }
 
     pub async fn delete_api<T: serde::Serialize>(
@@ -73,7 +92,7 @@ impl BitGoClient {
         params: &T,
     ) -> Result<serde_json::Value> {
         log::trace!("request url {:?}", request_url);
-        let builder = reqwest::Client::new().delete(request_url);
-        self.call_api(builder, params).await
+        let builder = reqwest::Client::builder();
+        self.call_api(builder, params, request_url).await
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name = "bitgo_api"
-version = "0.1.19"
+version = "0.1.20"
 edition = "2018"
 description = "Rust implimentation for Bitgo api"
 readme = "README.md"
@@ -11,7 +11,7 @@ authors = ["mostafa","nagaraj-manjunath"]
 structopt = { version = "0.3", default-features = false }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-reqwest = { version = "0.11.4", features = ["blocking", "json","rustls-tls-native-roots"] }
+reqwest = { version = "0.11.4", features = ["blocking", "json","default-tls"] }
 thiserror = "1.0.26"
 log = "0.4.14"
 async-trait = "0.1.50"
