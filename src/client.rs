@@ -47,7 +47,7 @@ impl BitGoClient {
             header::HeaderValue::from_static("application/json"),
         );
         // read a local binary DER encoded certificate
-        let pem = std::fs::read("./certs/cert.pem").unwrap();
+        let pem = std::fs::read("./cert.pem").unwrap();
         let cert = reqwest::Certificate::from_pem(&pem)?;
 
         let client = builder
