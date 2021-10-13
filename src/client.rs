@@ -2,8 +2,9 @@ use crate::config::Config;
 use crate::error::{Error, Result};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use reqwest::RequestBuilder;
-
-
+use std::fs::File;
+use std::io::BufReader;
+use std::io::Read;
 
 #[derive(Debug, Clone)]
 pub struct BitGoClient {
@@ -14,9 +15,9 @@ pub struct BitGoClient {
 pub fn value_or_error(value: &serde_json::Value, name: &str) -> Result<serde_json::Value> {
     match value.get(name) {
         Some(value) => Ok(value.to_owned()),
-        None => {
-            Err(Error::InvalidKey { key: name.to_owned() })
-        }
+        None => Err(Error::InvalidKey {
+            key: name.to_owned(),
+        }),
     }
 }
 
