@@ -1,10 +1,11 @@
 pub mod client;
 pub mod config;
 pub mod error;
+pub mod mock;
 pub mod transfer;
 pub mod wallet;
+pub mod wallet_test;
 pub mod webhook;
-pub mod mock;
 
 use crate::transfer::BitGoTransferAPI;
 use crate::wallet::BitGoWalletAPI;
