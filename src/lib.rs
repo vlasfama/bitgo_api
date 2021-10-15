@@ -4,7 +4,6 @@ pub mod error;
 pub mod mock;
 pub mod transfer;
 pub mod wallet;
-pub mod wallet_test;
 pub mod webhook;
 
 use crate::transfer::BitGoTransferAPI;
