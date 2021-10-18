@@ -64,7 +64,7 @@ mock! {
 
     #[async_trait]
     impl BitGoWebhookAPI for BitGoClient {
-        async fn add_wallet_webhook(
+        async fn add_wallet_webhook_with_all_token(
             &self,
             wallet_id: &str,
             identifier: &str,
@@ -73,6 +73,17 @@ mock! {
             webhook_url: &str,
             num_confirmation:i32,
             all_token: bool,
+            listen_failure_states: bool,
+        ) -> Result<serde_json::Value>;
+
+        async fn add_wallet_webhook(
+            &self,
+            wallet_id: &str,
+            identifier: &str,
+            webhook_label: &str,
+            webhook_type: &str,
+            webhook_url: &str,
+            num_confirmation:i32,
             listen_failure_states: bool,
         ) -> Result<serde_json::Value>;
 

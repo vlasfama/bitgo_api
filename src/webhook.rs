@@ -13,6 +13,17 @@ pub trait BitGoWebhookAPI {
         webhook_type: &str,
         webhook_url: &str,
         num_confirmation: i32,
+        listen_failure_states: bool,
+    ) -> Result<serde_json::Value>;
+
+    async fn add_wallet_webhook_with_all_token(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+        webhook_label: &str,
+        webhook_type: &str,
+        webhook_url: &str,
+        num_confirmation: i32,
         all_token: bool,
         listen_failure_states: bool,
     ) -> Result<serde_json::Value>;
@@ -53,7 +64,7 @@ pub trait BitGoWebhookAPI {
 }
 #[async_trait]
 impl BitGoWebhookAPI for BitGoClient {
-    async fn add_wallet_webhook(
+    async fn add_wallet_webhook_with_all_token(
         &self,
         wallet_id: &str,
         identifier: &str,
@@ -79,6 +90,35 @@ impl BitGoWebhookAPI for BitGoClient {
                 "label":webhook_label,
                 "numConfirmations":num_confirmation,
                 "allToken":all_token,
+                "listenToFailureStates":listen_failure_states
+            }),
+        )
+        .await
+    }
+    async fn add_wallet_webhook(
+        &self,
+        wallet_id: &str,
+        identifier: &str,
+        webhook_label: &str,
+        webhook_type: &str,
+        webhook_url: &str,
+        num_confirmation: i32,
+        listen_failure_states: bool,
+    ) -> Result<serde_json::Value> {
+        let request_url = format!(
+            "{url}/api/v2/{coin_type}/wallet/{wallet_id}/webhooks",
+            url = self.endpoint,
+            coin_type = identifier,
+            wallet_id = wallet_id,
+        );
+
+        self.post_api(
+            &request_url,
+            &json!({
+                "type": webhook_type,
+                "url": webhook_url,
+                "label":webhook_label,
+                "numConfirmations":num_confirmation,
                 "listenToFailureStates":listen_failure_states
             }),
         )
