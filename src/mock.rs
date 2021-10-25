@@ -64,7 +64,7 @@ mock! {
 
     #[async_trait]
     impl BitGoWebhookAPI for BitGoClient {
-        async fn add_wallet_webhook_with_all_token(
+        async fn add_wallet_webhook(
             &self,
             wallet_id: &str,
             identifier: &str,
@@ -76,16 +76,7 @@ mock! {
             listen_failure_states: bool,
         ) -> Result<serde_json::Value>;
 
-        async fn add_wallet_webhook(
-            &self,
-            wallet_id: &str,
-            identifier: &str,
-            webhook_label: &str,
-            webhook_type: &str,
-            webhook_url: &str,
-            num_confirmation:i32,
-            listen_failure_states: bool,
-        ) -> Result<serde_json::Value>;
+
 
         async fn add_block_webhook(
             &self,
@@ -119,7 +110,6 @@ mock! {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::client::value_or_error;
     use serde_json::json;
 
     #[tokio::test]
@@ -130,8 +120,9 @@ mod tests {
         ));
 
         let v = mock.create_address("any", " any", 0).await.unwrap();
+
         assert_eq!(
-            value_or_error(&v, "address").unwrap().to_owned(),
+            v.get("address").unwrap().to_owned(),
             "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS"
         );
     }

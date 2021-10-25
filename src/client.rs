@@ -1,9 +1,8 @@
 use crate::config::Config;
-use crate::error::{Error, Result};
+use crate::error::{Result};
+use log::{trace};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use reqwest::RequestBuilder;
-
-
 
 #[derive(Debug, Clone)]
 pub struct BitGoClient {
@@ -11,14 +10,6 @@ pub struct BitGoClient {
     pub token: String,
 }
 
-pub fn value_or_error(value: &serde_json::Value, name: &str) -> Result<serde_json::Value> {
-    match value.get(name) {
-        Some(value) => Ok(value.to_owned()),
-        None => {
-            Err(Error::InvalidKey { key: name.to_owned() })
-        }
-    }
-}
 
 impl BitGoClient {
     pub fn new(endpoint: String, token: String) -> Result<Self> {
@@ -42,7 +33,7 @@ impl BitGoClient {
             .await?
             .json()
             .await?;
-
+        trace!("bitgo api response {:?}", response_json);
         Ok(response_json)
     }
 
