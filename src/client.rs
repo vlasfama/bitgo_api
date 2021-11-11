@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::error::{Result};
+use crate::error::{Error, Result};
 use log::{trace};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 use reqwest::RequestBuilder;
@@ -25,16 +25,27 @@ impl BitGoClient {
         builder: RequestBuilder,
         params: &T,
     ) -> Result<serde_json::Value> {
-        let response_json: serde_json::Value = builder
-            .header(CONTENT_TYPE, "application/json")
-            .header(AUTHORIZATION, format!("Bearer {}", self.token))
-            .json(params)
-            .send()
-            .await?
+        let response = builder
+        .header(CONTENT_TYPE, "application/json")
+        .header(AUTHORIZATION, format!("Bearer {}", self.token))
+        .json(params)
+        .send()
+        .await?;
+        if response.status().is_success(){
+            let response_json: serde_json::Value = response
             .json()
             .await?;
         trace!("bitgo api response {:?}", response_json);
         Ok(response_json)
+        }else{
+           let err_json :serde_json::Value = response.json().await?;
+           let msg = match err_json.get("message") {
+            Some(value) => value.to_string(),
+            None => "Unknown Error".to_string(),
+        };
+           Err(Error::BitgoError{msg})
+        }
+    
     }
 
     pub async fn get_api<T: serde::Serialize>(

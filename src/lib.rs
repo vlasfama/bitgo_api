@@ -17,3 +17,4 @@ impl<T: BitGoWebhookAPI + BitGoWalletAPI + BitGoTransferAPI + Sync + Send + 'sta
     for T
 {
 }
+

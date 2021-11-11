@@ -7,6 +7,9 @@ pub enum Error {
 
     #[error("reqwest Error: {msg}")]
     ReqwestError { msg: String },
+
+    #[error("bitgo Error: {msg}")]
+    BitgoError { msg: String },
 }
 
 impl From<reqwest::Error> for Error {
@@ -16,5 +19,6 @@ impl From<reqwest::Error> for Error {
         }
     }
 }
+
 
 pub type Result<T> = std::result::Result<T, Error>;
