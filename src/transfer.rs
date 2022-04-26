@@ -17,11 +17,11 @@ pub trait BitGoTransferAPI {
     async fn get_fee(
         &self,
         identifier: &str,
-        num_blocks: &str,
+        num_blocks: &i32,
         recipient: &str,
         data: &str,
         amount: &str,
-        hop: &str,
+        hop: bool,
     ) -> Result<serde_json::Value>;
     async fn change_fee(
         &self,
@@ -63,11 +63,11 @@ impl BitGoTransferAPI for BitGoClient {
     async fn get_fee(
         &self,
         identifier: &str,
-        num_blocks: &str,
+        num_blocks: &i32,
         recipient: &str,
         data: &str,
         amount: &str,
-        hop: &str,
+        hop: bool,
     ) -> Result<serde_json::Value> {
         let request_url = format!(
             "{url}/api/v2/{coin_type}/tx/fee",

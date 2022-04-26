@@ -21,11 +21,11 @@ mock! {
         async fn get_fee(
             &self,
             identifier: &str,
-            num_blocks: &str,
+            num_blocks: &i32,
             recipient: &str,
             data: &str,
             amount: &str,
-            hop: &str,
+            hop: bool,
         ) -> Result<serde_json::Value>;
         async fn change_fee(
             &self,
