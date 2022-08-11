@@ -15,4 +15,11 @@ pub struct Config {
         about = "API key for the BitGo service"
     )]
     pub token: String,
+
+    #[structopt(
+        long = "bitgo-certpath",
+        env = "BITGO_CRTPATH",
+        about = "SSL public cert path certificate for the BitGo service"
+    )]
+    pub bitgo_cert_path: Option<String>,
 }
