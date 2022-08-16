@@ -114,12 +114,12 @@ mod tests {
     use serde_json::json;
 
     #[tokio::test]
-    #[ignore = "required bitgo server to be running"]
+    #[ignore = "required bitgo express to be running with tls certificate"]
     async fn test_tls_mocking() {
         let client = BitGoClient::new(
-            "https:://localhost:4000".to_string(),
+            "https:://127.0.0.1:4000".to_string(),
             "".to_string(),
-            Some("/Users/nagaraj/coinhaven/bitgo_api/certs/cert.pem".to_string()),
+            Some("/Users/nagaraj/Desktop/certs/cert.pem".to_string()),
         );
         if let Ok(cl) = client {
             let res = cl
@@ -132,7 +132,7 @@ mod tests {
         }
     }
     #[tokio::test]
-    #[ignore = "required bitgo server to be running"]
+    #[ignore = "required bitgo server to be running without tls certificate"]
     async fn test_without_tls() {
         let client = BitGoClient::new("https:://localhost:4000".to_string(), "".to_string(), None);
         if let Ok(cl) = client {
@@ -146,7 +146,7 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore = "required bitgo server to be running"]
+    #[ignore = "required bitgo server to be running without tls certificate"]
     async fn test_connect_local_bitgo_express() {
         let client = BitGoClient::new("http:://localhost:4000".to_string(), "".to_string(), None);
         if let Ok(cl) = client {
@@ -160,6 +160,41 @@ mod tests {
         }
     }
 
+    #[tokio::test]
+    #[ignore = "required bitgo server to be running"]
+    async fn test_tls_creat_wallet() {
+        let client = BitGoClient::new(
+            "https://localhost:4000".to_string(),
+            "v2xb593626f2384617b4ef22fc3757aa8e6d064065849164db99fd8104d7ac560d0".to_string(),
+            Some("/Users/nagaraj/Desktop/certs/cert.pem".to_string()),
+        );
+
+        if let Ok(cl) = client {
+            let res = cl
+                .create_address("60def63ab9390d000630211559c1544d", "tbtc", 0)
+                .await
+                .unwrap();
+            print!("{:?}", res)
+        } else {
+            todo!()
+        }
+    }
+    #[tokio::test]
+    #[ignore = "required bitgo server to be running"]
+    async fn test_tls_get_wallet() {
+        let client = BitGoClient::new(
+            "https://localhost:4000".to_string(),
+            "v2xb593626f2384617b4ef22fc3757aa8e6d064065849164db99fd8104d7ac560d0".to_string(),
+            Some("/Users/nagaraj/Desktop/certs/cert.pem".to_string()),
+        );
+
+        if let Ok(cl) = client {
+            let res = cl.get_wallet_list().await.unwrap();
+            print!("{:?}", res)
+        } else {
+            todo!()
+        }
+    }
     #[tokio::test]
     async fn test_mocking() {
         let mut mock = MockBitGoClient::new();

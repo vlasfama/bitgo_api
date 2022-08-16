@@ -18,8 +18,8 @@ pub struct Config {
 
     #[structopt(
         long = "bitgo-certpath",
-        env = "BITGO_CRTPATH",
-        about = "SSL public cert path certificate for the BitGo service"
+        env = "BITGO_CERTPATH",
+        about = "SSL public cert, path certificate for the BitGo service"
     )]
     pub bitgo_cert_path: Option<String>,
 }
