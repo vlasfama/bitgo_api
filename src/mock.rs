@@ -6,11 +6,11 @@ use mockall::mock;
 use crate::{transfer::BitGoTransferAPI, wallet::BitGoWalletAPI, webhook::BitGoWebhookAPI};
 
 mock! {
-    pub BitClient {
+    pub BitGoClient {
 
     }
     #[async_trait]
-    impl BitGoTransferAPI for BitClient {
+    impl BitGoTransferAPI for BitGoClient {
         async fn get_transaction(
             &self,
             wallet_id: &str,
@@ -38,7 +38,7 @@ mock! {
     }
 
     #[async_trait]
-    impl BitGoWalletAPI for BitClient {
+    impl BitGoWalletAPI for BitGoClient {
         async fn generate_wallet(
             &self,
             name: &str,
@@ -64,7 +64,7 @@ mock! {
     }
 
     #[async_trait]
-    impl BitGoWebhookAPI for BitClient {
+    impl BitGoWebhookAPI for BitGoClient {
         async fn add_wallet_webhook(
             &self,
             wallet_id: &str,
@@ -114,6 +114,7 @@ mod tests {
     use serde_json::json;
 
     #[tokio::test]
+    #[ignore = "required bitgo server to be running"]
     async fn test_tls_mocking() {
         let client = BitGoClient::new(
             "https:://localhost:4000".to_string(),
@@ -131,6 +132,7 @@ mod tests {
         }
     }
     #[tokio::test]
+    #[ignore = "required bitgo server to be running"]
     async fn test_without_tls() {
         let client = BitGoClient::new("https:://localhost:4000".to_string(), "".to_string(), None);
         if let Ok(cl) = client {
@@ -144,6 +146,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore = "required bitgo server to be running"]
     async fn test_connect_local_bitgo_express() {
         let client = BitGoClient::new("http:://localhost:4000".to_string(), "".to_string(), None);
         if let Ok(cl) = client {
@@ -159,7 +162,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_mocking() {
-        let mut mock = MockBitClient::new();
+        let mut mock = MockBitGoClient::new();
         mock.expect_create_address().return_const(Ok(
             json!({ "address": "2MvrwRYBAuRtPTiZ5MyKg42Ke55W3fZJfZS" }),
         ));

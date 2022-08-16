@@ -1,6 +1,6 @@
 [package]
 name = "bitgo_api"
-version = "0.1.25"
+version = "0.2.0"
 edition = "2018"
 description = "Rust implimentation for Bitgo api"
 readme = "README.md"
