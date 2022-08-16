@@ -119,7 +119,7 @@ mod tests {
         let client = BitGoClient::new(
             "https:://127.0.0.1:4000".to_string(),
             "".to_string(),
-            Some("/Users/nagaraj/Desktop/certs/cert.pem".to_string()),
+            Some("{path}/cert.pem".to_string()),
         );
         if let Ok(cl) = client {
             let res = cl
@@ -165,8 +165,8 @@ mod tests {
     async fn test_tls_creat_wallet() {
         let client = BitGoClient::new(
             "https://localhost:4000".to_string(),
-            "v2xb593626f2384617b4ef22fc3757aa8e6d064065849164db99fd8104d7ac560d0".to_string(),
-            Some("/Users/nagaraj/Desktop/certs/cert.pem".to_string()),
+            "".to_string(),
+            Some("{path}/cert.pem".to_string()),
         );
 
         if let Ok(cl) = client {
@@ -184,8 +184,8 @@ mod tests {
     async fn test_tls_get_wallet() {
         let client = BitGoClient::new(
             "https://localhost:4000".to_string(),
-            "v2xb593626f2384617b4ef22fc3757aa8e6d064065849164db99fd8104d7ac560d0".to_string(),
-            Some("/Users/nagaraj/Desktop/certs/cert.pem".to_string()),
+            "".to_string(),
+            Some("{path}/cert.pem".to_string()),
         );
 
         if let Ok(cl) = client {

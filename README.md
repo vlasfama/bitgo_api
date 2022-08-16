@@ -21,7 +21,7 @@ Make sure you have the below line in your Cargo.toml:
 
 ```toml
 [dependencies]
-bitgo_api = {version="0.1.11"}
+bitgo_api = {version="0.2.1"}
 ```
 
 ## How to mock
